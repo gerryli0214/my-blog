@@ -1,0 +1,115 @@
+## 前言
+
+***
+**冒泡排序**大家都不陌生，据说能打败**百分之九十**的前端，那只是针对初学者。最近一位朋友在面试中高级前端开发，遇到冒泡排序的问题，特地与我分享一下，问的比简单的实现冒泡排序稍微深入点，着重考察`JavaScript`执行时序。
+***
+
+## 基本概念
+
+**冒泡排序**在计算机语言中是一个常用的简单排序。简而言之，就是数组中相邻两个元素进行比较，如果顺序不匹配，就依次交换各自的位置，直到数组中所有的数据符合要求为止。
+
+## 简单的冒泡排序
+
+```javascript
+    var test = [5, 7, 6, 3, 2]
+    function bubbleSort(arr) {
+        for (let i=0, len = arr.length; i < len; i++) {
+            for (let j = i + 1; j < len; j++) {
+                if (arr[i] > arr[j]) {
+                    let temp = arr[i]
+                    arr[i] = arr[j]
+                    arr[j] = temp
+                }
+            }
+        }
+    }
+    bubbleSort(test)
+    console.log(test)
+```
+
+## 带过滤条件的冒泡排序
+
+稍微增加一点处理，假如冒泡排序不是相邻的比较，是不间断的比较，该如何处理呢？比如一个数组`[5, -1, 6, -8, 10, 2, -9, 11]`,要求负数的位置不变，只比较正数的位置。
+其实原理是一样的，中间额外加一些判断条件就可以了，具体代码如下所示：
+
+```javascript
+    let test = [5, -1, 6, -7, 10, 2, -5, 11]
+    function bubbleSort (arr) {
+        for (let i=0, len = arr.length; i < len; i++) {
+            if (arr[i] < 0) continue
+            for (let j = i + 1; j < len; j++) {
+                if (arr[j] < 0) continue
+                if (arr[i] > arr[j]) {
+                    let temp = arr[i]
+                    arr[i] = arr[j]
+                    arr[j] = temp
+                }
+            }
+        }
+    }
+    bubbleSort(test)
+    console.log(test)
+```
+
+## 带延时执行的冒泡排序
+
+上述两种情况相对比较简单，属于入门级的，现在加深下难度，**假如每隔一秒，冒泡排序交换一次，这种代码该怎么去改呢？**
+博主不才，第一想到的竟然是利用闭包，闭包虽好，但是也不能乱用，显然这种场景下是不合时宜的。闭包能解决的问题是实现块级作用域，并不能影响**代码的执行时序**。虽然能做到每隔一秒执行一次变换排序，但是排序的结果是不对的。错误的代码如下所示：
+
+- **错误的方法**
+
+```javascript
+let test = [11, -1, 6, 5, -4, -7, 9, 8]
+function bubbleSort(arr) {
+    let count = 0
+    for (let i=0, len = arr.length; i < len; i++) {
+        if (arr[i] < 0) continue
+        for (let j = i + 1; j < len; j++) {
+            if (arr[j] < 0) continue
+            if (arr[i] > arr[j]) {
+                count++
+                (function (i, j) {
+                    setTimeout(function() {
+                        let temp = arr[i]
+                        arr[i] = arr[j]
+                        arr[j] = temp
+                        console.log(arr)
+                    }, count * 1000)
+                })(i, j)
+            }
+        }
+    }
+}
+bubbleSort(test)
+```
+
+- **原因分析**
+细心的童鞋可能会发现，闭包传参没问题，问题是出现在**交换的判断条件里**，循环执行是同步的，但是交换方法不是同步的，每次判断都是拿原数组数据去判断，在执行替换操作时，实际上已经修改了原数组的次序，导致后面的替换操作执行是错的。有一种很简单的修改方法，就是借助`async/await`，实现异步代码同步执行，具体实现方法如下：
+- **正确的写法**
+
+```javascript
+let arr = [11, -1, 6, 5, -4, -7, 9, 8]
+async function bubbleSort (arr) {
+    for (let i=0, len = arr.length; i < len; i++) {
+        if (arr[i] < 0) continue
+        for (let j = i + 1; j < len; j++) {
+            if (arr[j] < 0) continue
+            if (arr[i] > arr[j]) {
+                await execute(i, j, arr)
+                console.log(arr)
+            }
+        }
+    }
+}
+
+function execute (i, j, arr) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            let temp = arr[i]
+            arr[i] = arr[j]
+            arr[j] = temp
+            resolve()
+        }, 1000);
+    })
+}
+```
