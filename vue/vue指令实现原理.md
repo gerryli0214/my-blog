@@ -340,3 +340,5 @@ function patchVnode (
 ## 小结
 
 开始看整个`vue`源码时，对很多细枝末节方法都不怎么了解，通过梳理具体每个功能的实现时，渐渐能够看到整个`vue`全貌，同时也能避免开发使用中的一些坑点。
+
+[gitHub](https://github.com/gerryli0214/my-blog)
