@@ -333,7 +333,7 @@ function patchVnode (
 
 使用自定义指令时，和普通模板数据绑定，`v-model`还是存在一定的差别，如虽然我传递参数（`v-xxx='param'`）是一个引用类型，数据变化时，并不能触发指令的`bind`或者`inserted`，这是因为在指令的声明周期内，`bind`和`inserted`只是在初始化时调用一次，后面只会走`update`和`componentUpdated`。
 
-指令的声明周期执行顺序为`bind -> inserted -> update -> componentUpdated`，如果指令需要依赖于子组件的内容时，推荐在`componentUnpdated`中写相应业务逻辑。
+指令的声明周期执行顺序为`bind -> inserted -> update -> componentUpdated`，如果指令需要依赖于子组件的内容时，推荐在`componentUpdated`中写相应业务逻辑。
 
 `vue`中，很多方法都是循环调用，如`hooks`方法，事件回调等，一般调用都用`try catch`包裹，这样做的目的是为了防止一个处理方法报错，导致整个程序崩溃，这一点在我们开发过程中可以借鉴使用。
 
@@ -341,4 +341,4 @@ function patchVnode (
 
 开始看整个`vue`源码时，对很多细枝末节方法都不怎么了解，通过梳理具体每个功能的实现时，渐渐能够看到整个`vue`全貌，同时也能避免开发使用中的一些坑点。
 
-[gitHub](https://github.com/gerryli0214/my-blog)
+[GitHub](https://github.com/gerryli0214/my-blog)
