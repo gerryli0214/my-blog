@@ -8,6 +8,10 @@
 
 ### line-height
 
+`line-height`
+
 - 默认文本对齐方式：基线对齐（`baseline`)
 
 基线的定义：**字母x的下边缘（线）**
+`x-height`的定义：字母`x`的高度
+![cc](../asserts/x-height.png)
