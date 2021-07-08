@@ -6,5 +6,27 @@
 
 - 什么是函数式组件
 - 函数式组件实现原理
-- 函数式组件 `VS` 普通组件，性能提升点在哪里
-- `vue`中类似原理的性能优化
+- `vue`性能优化思路
+
+## 什么是函数式组件
+
+函数式组件即**无状态组件**，没有`data`、`computed`、`watch`，也没有生命周期方法，组件中也没有`this`上下文，只有`props`传参。在开发中，有很多组件仅仅只用到了`props`和插槽，这部分组件就可以提炼为函数式组件。借用官网`demo`，最简单的函数式组件如下：
+
+```JavaScript
+Vue.component('my-component', {
+  functional: true,
+  // Props 是可选的
+  props: {
+    // ...
+  },
+  // 为了弥补缺少的实例
+  // 提供第二个参数作为上下文
+  render: function (createElement, context) {
+    // ...
+  }
+})
+```
+
+## 函数式组件实现原理
+
+## vue性能优化思路
