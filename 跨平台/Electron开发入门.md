@@ -32,13 +32,13 @@
 
 ## 二、快速实现一个Electron应用
 
-- 初始化项目
+### 2.1 初始化项目
 
 ```JavaScript
 npm install electron -D
 ```
 
-- 设置启动脚本
+### 2.2 设置启动脚本
 
 ```JavaScript
 // package.json
@@ -49,7 +49,7 @@ npm install electron -D
 }
 ```
 
-- 创建HTML模板文件
+### 2.3 创建HTML模板文件
 
 ```html
 <!DOCTYPE html>
@@ -70,7 +70,7 @@ npm install electron -D
 
 ```
 
-- 设置启动脚本
+### 2.4 设置启动脚本
 
 ```JavaScript
 const { app, BrowserWindow } = require('electron')
@@ -90,7 +90,7 @@ app.whenReady().then(() => {
 
 ```
 
-- 启动应用
+### 2.5 启动应用
 
 ```JavaScript
 npm run start
