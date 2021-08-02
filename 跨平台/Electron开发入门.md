@@ -532,7 +532,7 @@ async executeMakensis(defines, commands, script) {
   - 文件等`IO`使用异步方式
   - `Fork`子进程进行计算
 
-## 八、参开资料
+## 八、参考资料
 
 - [electron](https://www.electronjs.org)
 - [electron-demo](https://github.com/gerryli0214/electron-demo)
