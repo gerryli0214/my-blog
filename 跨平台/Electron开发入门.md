@@ -27,8 +27,8 @@
 
 ### 1.2 常见的Electron应用
 
-- Atom
-- VScode
+- `Atom`
+- `VScode`
 
 ## 二、快速实现一个Electron应用
 
@@ -128,8 +128,8 @@ const win = new BrowserWindow({
 
 ### 3.2 加载窗口资源文件
 
-- loadFile
-- loadURL
+- `loadFile`
+- `loadURL`
 
 ```JavaScript
 win.loadFile('index.html')
@@ -138,15 +138,15 @@ win.loadURL('http://localhost:8080')
 
 ### 3.3 窗口事件
 
-- show
-- hide
-- blur
-- ready-to-show
-- resize
-- move
-- restore
-- minimize
-- maximize
+- `show`
+- `hide`
+- `blur`
+- `ready-to-show`
+- `resize`
+- `move`
+- `restore`
+- `minimize`
+- `maximize`
 // ...
 
 ```JavaScript
@@ -164,13 +164,13 @@ window.onbeforeunload = (e) => {
 
 ### 3.4 窗口实例方法
 
-- close
-- focus
-- show
-- hide
-- minimize
-- maximize
-- setFullScreen
+- `close`
+- `focus`
+- `show`
+- `hide`
+- `minimize`
+- `maximize`
+- `setFullScreen`
 // ...
 
 ## 四、应用扩展功能
@@ -310,7 +310,102 @@ if (args.mode !== 'development') {
 
 ### 5.1 简介
 
-`ele`
+`electron`中，分为主进程和渲染进程。主进程负责控制整个应用的生命周期，渲染进程负责渲染网页内容。每新打开一个窗口，就会创建一个新的进程。进程与进程时间是隔离的，每个窗口都有独立的`window`对象，而要实现进程间通信，一般采用`electron`内置`ipc`模块。
+
+### 5.2 进程间通信
+
+#### 5.2.1 主进程与渲染进程间通信
+
+```JavaScript
+// 在主进程中.
+const { ipcMain } = require('electron')
+ipcMain.on('asynchronous-message', (event, arg) => {
+  console.log(arg) // prints "ping"
+  event.reply('asynchronous-reply', 'pong')
+})
+
+ipcMain.on('synchronous-message', (event, arg) => {
+  console.log(arg) // prints "ping"
+  event.returnValue = 'pong'
+})
+```
+
+```JavaScript
+//在渲染器进程 (网页) 中。
+const { ipcRenderer } = require('electron')
+console.log(ipcRenderer.sendSync('synchronous-message', 'ping')) // prints "pong"
+
+ipcRenderer.on('asynchronous-reply', (event, arg) => {
+  console.log(arg) // prints "pong"
+})
+ipcRenderer.send('asynchronous-message', 'ping')
+```
+
+#### 5.2.2 渲染进程与渲染进程间通信
+
+```JavaScript
+// ipc.js
+const electron = require('electron')
+const { remote, ipcRenderer } = electron
+const { BrowserWindow } = remote
+
+const currentWindow = remote.getCurrentWindow()
+
+let ipc = {
+
+  __listeners: [],
+  //订阅消息
+  on(channel, listener) {
+    let callback = (e, payload) => listener(payload)
+
+    this.__listeners.push(callback)
+    ipcRenderer.on(channel, callback)
+
+    return { channel, callback }
+  },
+
+  //移除监听器
+  off(channel, listener) {
+    ipcRenderer.removeListener(channel, listener)
+  },
+
+  //发布广播消息，默认不包含自己
+  send(channel, payload, exclude = true) {
+    //发给主进程
+    ipcRenderer.send(channel, payload)
+
+    //发给其他应用程序
+    for (let win of BrowserWindow.getAllWindows()) {
+      if (!(exclude && win === currentWindow)) {//判断是否发送给当前的App
+        win.webContents.send(channel, payload)
+      }
+
+    }
+  },
+}
+module.exports = ipc
+```
+
+通过预加载脚本，注册至全局：
+
+```JavaScript
+// preload.js
+const { remote, ipcRenderer } = require('electron')
+const ipc = require('./class/ipc')
+
+const shareData = remote.getGlobal('shareData')
+
+global.$currentWindow = shareData.$currentWindow
+
+shareData.$electron.ipcRenderer = ipcRenderer
+
+global.$electron = shareData.$electron
+
+global.$createWindow = shareData.$createWindow
+
+global.$ipc = ipc
+
+```
 
 ## 六、打包（electron-builder）
 
@@ -436,3 +531,8 @@ async executeMakensis(defines, commands, script) {
   - `Node Addon`扩展
   - 文件等`IO`使用异步方式
   - `Fork`子进程进行计算
+
+## 八、参开资料
+
+- [electron](https://www.electronjs.org)
+- [electron-demo](https://github.com/gerryli0214/electron-demo)
