@@ -283,9 +283,146 @@ app.on('will-quit', () => {
 
 ```
 
+### 4.5 开机自启
+
+#### 4.5.1 基本使用
+
+```JavaScript
+// 设置开机自启动
+// 要区分开发环境与生产环境，否则可能导致开机启动两个electron窗口
+if (args.mode !== 'development') {
+    app.setLoginItemSettings({
+        openAtLogin: true,
+        openAsHidden:false,
+        path: process.execPath
+    })
+}
+```
+
+#### 4.5.2 注意事项
+
+- 查看开机自启是否注册成功
+
+  - `win + R`,输入`msconfig`
+  - 在系统配置中，启动`tab`页可以查看系统服务注册情况
+
 ## 五、进程间通信
 
+### 5.1 简介
+
+`ele`
+
 ## 六、打包（electron-builder）
+
+### 6.1 简介
+
+`electron`应用打包主要采用`electron-builder`，可以打包成两种方式，一种是免安装；另外一种为`.exe`文件，需要手动执行安装过程。
+
+### 6.2 安装依赖包
+
+```JavaScript
+npm install electron-builder -D
+```
+
+### 6.3 打包配置文件
+
+```JavaScript
+{
+    "productName": "demo", // 安装包名称
+    "appId": "com.aimooc.xxxxx",//包名
+    "copyright": "xxxx",// 版权信息
+    "directories": { // 输出文件夹
+      "output": "dist"
+    },
+    "nsis": { // 安装过程配置
+      "oneClick": false, // 是否一键安装
+      "allowElevation": true, // 允许请求提升。 如果为false，则用户必须使用提升的权限重新启动安装程序。
+      "allowToChangeInstallationDirectory": true, // 修改安装目录
+      "createDesktopShortcut": true, // 创建桌面图标
+      "createStartMenuShortcut": true, // 创建开始菜单图标
+      "shortcutName": "demo" // 图标名称
+    },
+    "publish": [ // 更新配置
+      {
+        "provider": "generic", // 服务器提供商 也可以是GitHub等等
+        "url": "http://xxxxx/" // 服务器地址
+      }
+    ],
+    "files": [ // 需要打包的文件列表
+      "webPackage/**/*",
+      ".electron/**/*"
+    ],
+    "win": { // windows平台下打包配置
+      "icon": "build/icons/222.ico",
+      "target": [
+        {
+          "target": "nsis", // 安装包格式
+          "arch": [ // 打包出32位&&64位安装包
+            "x64", 
+            "ia32"
+          ]
+        }
+      ]
+    },
+    "linux": { // linux下打包配置
+      "icon": "build/icons/222.ico",
+      "maintainer": "gerry",
+      "target": [
+        {
+          "target": "deb"  // 安装包格式
+        }
+      ]
+    }
+  }
+```
+
+### 6.4打包命令
+
+```JavaScript
+{
+  "build-web": "webpack --config ./build/webpack.config.js --mode production",
+  "build-win": "electron-builder -w --config ./electron-builder.json",
+  "build-arm": "electron-builder --arm64 --config ./electron-builder.json",
+}
+
+```
+
+### 6.5 打包常见问题
+
+#### 6.5.1 依赖安装包下载失败
+
+解决办法：手动下载
+
+- [electron-v10.4.7-win32-ia32.zip](https://github.com/electron/electron/releases/download/v10.4.7/electron-v10.4.7-win32-ia32.zip)
+- [niss](https://github.com/electron-userland/electron-builder-binaries/releases/tag/nsis-3.0.4.1)
+
+下载后存放地址：
+
+`C:\Users\{userCount}\AppData\Local\electron\Cache`
+
+#### 6.5.2 niss乱码解析配置修改（项目目录中存在中文字符，导致打包失败）
+
+解决办法：修改打包源文件
+
+```JavaScript
+//node_module/app-builder-lib/out/targets/nsis/NsisTarget.js
+async executeMakensis(defines, commands, script) {
+  const args = this.options.warningsAsErrors === false ? [] : ["-WX"];
+  //此处新增
+  args.push("-INPUTCHARSET", "UTF8");
+  //结束
+  for (const name of Object.keys(defines)) {
+    const value = defines[name];
+
+    if (value == null) {
+      args.push(`-D${name}`);
+    } else {
+      args.push(`-D${name}=${value}`);
+    }
+  }
+  // ...
+}
+```
 
 ## 七、踩过的坑
 
