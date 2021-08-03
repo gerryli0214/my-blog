@@ -1,4 +1,56 @@
-# Electron开发入门
+# Electron开发实战
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [一、Electron是什么](#%E4%B8%80electron%E6%98%AF%E4%BB%80%E4%B9%88)
+  - [1.1 Electron应用架构](#11-electron%E5%BA%94%E7%94%A8%E6%9E%B6%E6%9E%84)
+  - [1.2 常见的Electron应用](#12-%E5%B8%B8%E8%A7%81%E7%9A%84electron%E5%BA%94%E7%94%A8)
+- [二、快速实现一个Electron应用](#%E4%BA%8C%E5%BF%AB%E9%80%9F%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAelectron%E5%BA%94%E7%94%A8)
+  - [2.1 初始化项目](#21-%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%B9%E7%9B%AE)
+  - [2.2 设置启动脚本](#22-%E8%AE%BE%E7%BD%AE%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC)
+  - [2.3 创建HTML模板文件](#23-%E5%88%9B%E5%BB%BAhtml%E6%A8%A1%E6%9D%BF%E6%96%87%E4%BB%B6)
+  - [2.4 设置启动脚本](#24-%E8%AE%BE%E7%BD%AE%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC)
+  - [2.5 启动应用](#25-%E5%90%AF%E5%8A%A8%E5%BA%94%E7%94%A8)
+- [三、窗口与展现](#%E4%B8%89%E7%AA%97%E5%8F%A3%E4%B8%8E%E5%B1%95%E7%8E%B0)
+  - [3.1 创建窗口](#31-%E5%88%9B%E5%BB%BA%E7%AA%97%E5%8F%A3)
+  - [3.2 加载窗口资源文件](#32-%E5%8A%A0%E8%BD%BD%E7%AA%97%E5%8F%A3%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6)
+  - [3.3 窗口事件](#33-%E7%AA%97%E5%8F%A3%E4%BA%8B%E4%BB%B6)
+  - [3.4 窗口实例方法](#34-%E7%AA%97%E5%8F%A3%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95)
+- [四、应用扩展功能](#%E5%9B%9B%E5%BA%94%E7%94%A8%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD)
+  - [4.1 app](#41-app)
+    - [4.1.1 事件](#411-%E4%BA%8B%E4%BB%B6)
+    - [4.1.2 方法](#412-%E6%96%B9%E6%B3%95)
+  - [4.2 对话框](#42-%E5%AF%B9%E8%AF%9D%E6%A1%86)
+    - [4.2.1 基本使用](#421-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8)
+    - [4.2.2 模态框种类](#422-%E6%A8%A1%E6%80%81%E6%A1%86%E7%A7%8D%E7%B1%BB)
+  - [4.3 菜单](#43-%E8%8F%9C%E5%8D%95)
+    - [4.3.1 方法](#431-%E6%96%B9%E6%B3%95)
+    - [4.3.2 基本使用](#432-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8)
+  - [4.4 快捷键](#44-%E5%BF%AB%E6%8D%B7%E9%94%AE)
+    - [4.4.1 静态方法](#441-%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95)
+    - [4.4.2 基本使用](#442-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8)
+  - [4.5 开机自启](#45-%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF)
+    - [4.5.1 基本使用](#451-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8)
+    - [4.5.2 注意事项](#452-%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9)
+- [五、进程间通信](#%E4%BA%94%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1)
+  - [5.1 简介](#51-%E7%AE%80%E4%BB%8B)
+  - [5.2 进程间通信](#52-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1)
+    - [5.2.1 主进程与渲染进程间通信](#521-%E4%B8%BB%E8%BF%9B%E7%A8%8B%E4%B8%8E%E6%B8%B2%E6%9F%93%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1)
+    - [5.2.2 渲染进程与渲染进程间通信](#522-%E6%B8%B2%E6%9F%93%E8%BF%9B%E7%A8%8B%E4%B8%8E%E6%B8%B2%E6%9F%93%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1)
+- [六、打包（electron-builder）](#%E5%85%AD%E6%89%93%E5%8C%85electron-builder)
+  - [6.1 简介](#61-%E7%AE%80%E4%BB%8B)
+  - [6.2 安装依赖包](#62-%E5%AE%89%E8%A3%85%E4%BE%9D%E8%B5%96%E5%8C%85)
+  - [6.3 electron-builder打包配置文件](#63-electron-builder%E6%89%93%E5%8C%85%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
+  - [6.4打包命令](#64%E6%89%93%E5%8C%85%E5%91%BD%E4%BB%A4)
+  - [6.5 打包常见问题](#65-%E6%89%93%E5%8C%85%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
+    - [6.5.1 依赖安装包下载失败](#651-%E4%BE%9D%E8%B5%96%E5%AE%89%E8%A3%85%E5%8C%85%E4%B8%8B%E8%BD%BD%E5%A4%B1%E8%B4%A5)
+    - [6.5.2 nsis乱码解析配置修改（项目目录中存在中文字符，导致打包失败）](#652-nsis%E4%B9%B1%E7%A0%81%E8%A7%A3%E6%9E%90%E9%85%8D%E7%BD%AE%E4%BF%AE%E6%94%B9%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95%E4%B8%AD%E5%AD%98%E5%9C%A8%E4%B8%AD%E6%96%87%E5%AD%97%E7%AC%A6%E5%AF%BC%E8%87%B4%E6%89%93%E5%8C%85%E5%A4%B1%E8%B4%A5)
+    - [6.5.3 生产环境下，打开新窗口推荐使用绝对路径，相对路径在开机自启下会有问题](#653-%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E4%B8%8B%E6%89%93%E5%BC%80%E6%96%B0%E7%AA%97%E5%8F%A3%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E5%9C%A8%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E4%B8%8B%E4%BC%9A%E6%9C%89%E9%97%AE%E9%A2%98)
+- [七、踩过的坑](#%E4%B8%83%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91)
+- [八、参考资料](#%E5%85%AB%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## 一、Electron是什么
 
@@ -411,7 +463,11 @@ global.$ipc = ipc
 
 ### 6.1 简介
 
-`electron`应用打包主要采用`electron-builder`，可以打包成两种方式，一种是免安装；另外一种为`.exe`文件，需要手动执行安装过程。
+`electron`应用打包主要采用`electron-builder`，可以打包成两种方式，一种是免安装；另外一种为`.exe`文件，需要手动执行安装过程。打包一般分为三步：
+
+1. 打包`web`端（渲染进程）静态资源文件
+2. 打包主进程文件
+3. 利用`electron-builder`，将上述文件打包成各个平台安装包
 
 ### 6.2 安装依赖包
 
@@ -419,13 +475,16 @@ global.$ipc = ipc
 npm install electron-builder -D
 ```
 
-### 6.3 打包配置文件
+### 6.3 electron-builder打包配置文件
 
 ```JavaScript
 {
     "productName": "demo", // 安装包名称
-    "appId": "com.aimooc.xxxxx",//包名
-    "copyright": "xxxx",// 版权信息
+    "appId": "com.demo.electron",//包名
+    "copyright": "@copyright",// 版权信息
+    "extraMetadata": { // 指定打包时入口文件
+      "main": "mainPackage/index.js"
+    },
     "directories": { // 输出文件夹
       "output": "dist"
     },
@@ -445,7 +504,7 @@ npm install electron-builder -D
     ],
     "files": [ // 需要打包的文件列表
       "webPackage/**/*",
-      ".electron/**/*"
+      "mainPackage/**/*"
     ],
     "win": { // windows平台下打包配置
       "icon": "build/icons/222.ico",
@@ -476,7 +535,9 @@ npm install electron-builder -D
 ```JavaScript
 {
   "build-web": "webpack --config ./build/webpack.config.js --mode production",
+  "build-main": "webpack --config ./build/webpack.main.config.js --mode production",
   "build-win": "electron-builder -w --config ./electron-builder.json",
+  "build-win-package": "npm run build-web && npm run build-main && npm run build-win",
   "build-arm": "electron-builder --arm64 --config ./electron-builder.json",
 }
 
@@ -489,13 +550,13 @@ npm install electron-builder -D
 解决办法：手动下载
 
 - [electron-v10.4.7-win32-ia32.zip](https://github.com/electron/electron/releases/download/v10.4.7/electron-v10.4.7-win32-ia32.zip)
-- [niss](https://github.com/electron-userland/electron-builder-binaries/releases/tag/nsis-3.0.4.1)
+- [nsis](https://github.com/electron-userland/electron-builder-binaries/releases/tag/nsis-3.0.4.1)
 
 下载后存放地址：
 
 `C:\Users\{userCount}\AppData\Local\electron\Cache`
 
-#### 6.5.2 niss乱码解析配置修改（项目目录中存在中文字符，导致打包失败）
+#### 6.5.2 nsis乱码解析配置修改（项目目录中存在中文字符，导致打包失败）
 
 解决办法：修改打包源文件
 
@@ -519,6 +580,8 @@ async executeMakensis(defines, commands, script) {
 }
 ```
 
+#### 6.5.3 生产环境下，打开新窗口推荐使用绝对路径，相对路径在开机自启下会有问题
+
 ## 七、踩过的坑
 
 - 内存泄漏
@@ -535,4 +598,5 @@ async executeMakensis(defines, commands, script) {
 ## 八、参考资料
 
 - [electron](https://www.electronjs.org)
+- [electron-builder](https://www.electron.build/)
 - [electron-demo](https://github.com/gerryli0214/electron-demo)
