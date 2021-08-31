@@ -12,7 +12,7 @@
 
 ### vertical-align为什么时灵时不灵
 
-
+只能应用在`display`为`inline`、`inline`、`inline-table`、`table-cell`上。
 
 #### vertial-align生效的条件
 
