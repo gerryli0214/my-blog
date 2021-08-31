@@ -12,11 +12,13 @@
 
 ### vertical-align为什么时灵时不灵
 
-只能应用在`display`为`inline`、`inline`、`inline-table`、`table-cell`上。
+生效条件：只能应用在`display`为`inline`、`inline-block`、`inline-table`、`table-cell`上。
 
-#### vertial-align生效的条件
+有个高频面试题，“如何使一个不定宽高`div`垂直水平居中？”，有的萌新竟然回答用`vertical-align: middle`。这个回答是减分的，至少在某种程度上给人一种感觉`CSS`基础比较薄弱。
 
-#### vertical-align其他影响因素
+#### 影响vertial-align外在表现的属性
+
+- `line-height`
 
 ### BFC究竟有什么作用
 
