@@ -4,8 +4,8 @@
 
 今年上半年，陆陆续续参加十来场前端招聘，发现很多前端`er`对`CSS`了解不是很多，如`vertical-align`、`BFC`、`position`等。本文就对面试中经常问到的易错知识点进行概括总结。从本文中，你将了解到以下内容：
 
-- `vertical-align`生效条件
-- `BFC`是什么？有何作用？
+- `vertical-align`为何时灵时不灵
+- `BFC`是什么？有何作用
 - `position`的奇淫技巧
 
 ## CSS特性

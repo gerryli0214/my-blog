@@ -1,4 +1,4 @@
-# Fullscreen API与DOM监听API
+# Fullscreen API与DOM监听API的妙用
 
 ## 前言
 
