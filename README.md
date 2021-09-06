@@ -2,6 +2,7 @@
 
 - CSS
   - [CSS实用技巧（上）](css/css实用技巧（上）.md)
+  - [CSS实用技巧（中）](css/css实用技巧（中）.md)
 - JavaScript
   - [一文读懂富文本编辑器](js/一文读懂富文本编辑器.md)
   - [Fullscree API与DOM监听API](js/Fullscreen%20API与DOM监听API.md)
