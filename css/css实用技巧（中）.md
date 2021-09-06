@@ -2,11 +2,11 @@
 
 ## 前言
 
-今年上半年，陆陆续续参加十来场前端招聘，发现很多前端`er`对`CSS`了解不是很多，如`vertical-align`、`BFC`、`position`等。本文就对面试中经常问到的易错知识点进行概括总结。从本文中，你将了解到以下内容：
+我们经常使用`CSS`，但是却不怎么了解`CSS`，本文主要对`vertical-align`、`BFC`、`position`中开发过程不怎么注意的特性进行简要总结，从本文中，你将了解到以下内容：
 
 - `vertical-align`为何时灵时不灵
 - `BFC`是什么？有何作用
-- `position`的奇淫技巧
+- 绝对定位的奇淫技巧
 
 ## CSS特性
 
@@ -159,14 +159,118 @@
 </div>
 ```
 
-### position定位还能玩出什么花样
+### 绝对定位还能玩出什么花样
 
-#### 普通position定位
+#### 简介
+
+绝对定位使用场景非常多。绝对定位元素脱离文档流，相对于最近的非 `static` 祖先元素定位，可以利用`left/right/top/bottom`定位元素位置。我们通常都是设置垂直方向与水平方向的的位置，如果四个方向都不设置或者四个方向都设置会出现什么彩蛋呢？下文会给出揭晓。
 
 #### left/top/right/bottom都有值的定位
 
-#### left/top/right/bottom都没有值的定位
+- 当对立位置（`left`与`right`，`top`与`bottom`）都设置值**且元素没用固定宽高**
+  
+此时元素的宽高是根据元素位置决定的，张鑫旭大佬在《`CSS`世界》中定义为格式化宽高，如下代码，最终`box-item`的宽高计算为：`width = 200 - 50 -50 = 100px;width = 200 - 50 -50 = 100px;`
+
+```html
+<style>
+  .box{
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 50px;
+    background-color: bisque;
+  }
+  .box-item{
+    position: absolute;
+    left: 50px;
+    right: 50px;
+    top: 50px;
+    bottom: 50px;
+    background-color: coral;
+  }
+</style>
+ <div class="box">
+    <div class="box-item"></div>
+  </div>
+```
+
+这种行为特性对于我们做自适应布局非常有用，而且兼容性非常好，比如我们要做左侧固定宽度，右侧自适应，除了以上`BFC`的写法，我们还可以采用以下方法：
+
+```html
+<style>
+  .container{
+    position: absolute;
+    top: 100px;
+    bottom: 100px;
+    left: 0;
+    right: 0;
+  }
+  .left{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 200px;
+    background-color: burlywood;
+  }
+  .right{
+    position: absolute;
+    left: 200px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: cadetblue;
+  }
+</style>
+<div class="container">
+  <div class="left"></div>
+  <div class="right"></div>
+</div>
+```
+
+- 当对立位置都设置了值且元素设置了固定宽高
+
+这个时候你会发现，元素的宽高时以`width/height`为准，上述说的格式化宽度、高度并没有生效。这是因为在高度计算过程中，元素的内部尺寸优先级大于外部尺寸，`width/height`影响的是元素内部尺寸，绝对定位影响的是外部尺寸，当元素绝对定位四个方向都设置值，此时外部尺寸会被内部尺寸覆盖，导致实际元素宽度是`width/height`的值。
+
+我们经常用`margin: 0 auto;`实现元素水平居中，但是不定宽高元素垂直水平居中就有些麻烦。但是有个神奇的现象，绝对定位配合`margin: auto;`，可以实现元素垂直水平居中，如下所示：
+
+```html
+<style>
+  .box{
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 50px;
+    background-color: bisque;
+  }
+  .box-item{
+    position: absolute;
+    margin: auto;
+    width: 50px;
+    height: 50px;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: coral;
+  }
+</style>
+<div class="box">
+  <div class="box-item"></div>
+</div>
+```
+
+出现这种现象是因为`margin:auto`本质上是平分元素剩余可用空间，块级元素一般是水平方向自动充满，垂直方向顺序排列。平常我们用`margin: 0 auto;`之所以能够使块级元素水平居中，是因为水平方向元素存在剩余可用空间，而`auto`平分剩余可用空间，因此就产生居中效果。而垂直方向不存在剩余可用空间，因此无法垂直居中。
+上述`demo`，`box-item`之所以能够垂直居中，得益于`top/bottom`设置了值，使元素产生高度`100%`的外部尺寸，而`width/height`固定元素的内部尺寸，使得 **外部尺寸高度-内部尺寸高度=元素剩余可用空间高度**，而`auto`等分剩余可用空间，可以使元素达到垂直居中效果。可以尝试调整四个方向的值，看看`box-item`位置是怎么移动的。
+
+#### 无依赖的绝对定位
+
+当绝对定位没有设置四周定位尺寸时，会发生神奇的一幕，当前元素没有相对于最近的非 `static` 祖先元素定位，而是在当前位置不变，并且当前元素脱离文档流，不占据页面空间。这个特性某些情况下非常有用，比如给`box-card`加一个图标，借助无依赖定位 + `padding/margin`即可。写法比较简洁，建议尝试一下。
+
+## 小结
+
+比起其他的开发语言，想要深入了解`CSS`，并不是一件容易事，大多数人都是停留在用的基础上，知道这个属性/方法，至于为什么会这样了解较少。张鑫旭大佬`CSS`高度让人叹为观止，继续加油吧！！！
 
 ## 参考资料
 
+- 《`CSS`世界》
 - [BFC](https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/Block_formatting_context)
