@@ -1,0 +1,72 @@
+# Quill editor笔记
+
+## 简介
+
+从事前端开发的同学，对富文本编辑器都不是很陌生。但是大多数富文本编辑器都是开箱即用，很少会对其实现原理进行深入的探讨。假如静下心去细细品味，会发现是前端领域的一个天坑。
+
+富文本编辑器根据其实现方式，业内将其划分为`L0 ~ L2`，层层递进，功能的支撑也越来越强大。
+
+| 阶段 | 描述 | 典型产品 |
+| -- | -- | -- |
+| L0 | 视图层基于contenteditable，逻辑层基于document.execCommand，直接操作DOM | UEditor、TinyMCE |
+| L1 | 视图层基于contenteditable，逻辑层对DOM进行抽象，用数据去驱动视图更新 | Quill、Prosemirror、slate、Draft |
+| L2 | 自己实现内容排版，不依赖于浏览器原生操作 | Google Docs、WPS |
+
+- 市场主流编辑器综合比对
+
+![开源编辑器综合对比](./assets/rich-editor-list.png)
+
+## Quill 基本原理
+
+在了解`Quill`基本原理之前，我们先要了解下`Quill`的几个核心概念。
+
+### 核心概念
+
+- `Delta`
+
+套用官网的话,什么是`Delta`?
+
+![Delta](./assets/delta.png)
+
+这段话翻译为中文为：**“Deltas是一种简单而富有表现力的格式，可以用来描述Quill的内容和变化。该格式是JSON的严格子集，是人类可读的，机器很容易解析。Deltas可以描述任何Quill文档，包括所有文本和格式信息，没有HTML的歧义和复杂性。”**
+
+相对于`L0`级编辑器，`Quill`能感知到`DOM`的变化，并且能够用结构化的数据描述出这种变化，这种能力使文档协同编辑成为了可能。协同编辑需要实时更新每位用户编辑的变化，`Delta`能够获取、描述并处理这种变化，我们只需要通过`websocket`，分发每位用户就能得到协同编辑功能。
+
+一个`Delta`数据结构表现形式：
+
+```javascript
+// 编辑器初始值
+{
+  "ops": [
+    { "insert": "Hello " },
+    { "insert": "World" },
+  ]
+}
+// 给World加粗后的值
+// 3种动作：insert: 插入，retain：保留， delete：删除
+{
+  "ops": [
+    { "retain": 6 },
+    { "retain": 5, "attributes": { "bold": true } }
+  ]
+}
+```
+
+- `Parchment`与`Blot`
+
+`Parchment`是`document`的数据抽象，而`Blot`是对`Node`节点的抽象。也就是说，`Parchment`是`Blot`的父级，很多个`Blot`组装成一个`Parchment`。
+
+`Blot`分类：
+
+- `ContainerBlot`(容器节点)
+- `ScrollBlot` `root`(文档的根节点，不可格式化)
+- `BlockBlot` 块级(可格式化的父级节点)
+- `InlineBlot` 内联(可格式化的父级节点)
+
+
+## 参考资料
+
+- [Quill](https://quilljs.com)
+
+- [Quill富文本编辑器的实践](https://juejin.cn/post/6966993945973194765)
+- [深入浅出QuillJS](https://juejin.cn/post/6896066147767025678)
